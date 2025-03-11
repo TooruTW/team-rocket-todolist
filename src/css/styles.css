@@ -118,12 +118,12 @@ main .col .mainpage-btns > :first-child div {
     justify-self: center;
   }
 }
-body {
+.mission-body {
   position: relative;
   background-color: transparent;
 }
 
-body::after {
+.mission-body::after {
   z-index: -1;
   content: "";
   position: absolute;
@@ -315,10 +315,10 @@ header div h2 {
   header h1 {
     display: none;
   }
-  body::after {
+  .mission-body::after {
     display: none;
   }
-  body {
+  .mission-body {
     background-color: #FFD370;
   }
   .mission {
