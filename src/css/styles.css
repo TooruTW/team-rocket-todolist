@@ -25,7 +25,7 @@ main .col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 386px;
+  width: 37.5%;
 }
 main .col img {
   width: 100%;
@@ -98,4 +98,21 @@ main .col .mainpage-btns > :first-child div {
 }
 .reverse > :first-child div {
   color: #333333 !important;
+}
+
+@media (max-width: 768px) {
+  main {
+    flex-direction: column;
+    justify-content: center;
+  }
+  main .rwd-hidden {
+    display: none;
+  }
+  main .col {
+    width: 100%;
+    padding: 0 32px;
+  }
+  main .col h2 {
+    justify-self: center;
+  }
 }/*# sourceMappingURL=styles.css.map */
