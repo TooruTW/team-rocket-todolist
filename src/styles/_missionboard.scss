@@ -197,3 +197,27 @@ header{
         }
     }
 }
+
+@media (max-width: 768px){
+   header{
+        padding: 16px 24px;
+        h1{
+            display: none;
+        }
+   }
+   body::after{
+    display: none;
+    }
+    body{
+    background-color: $theme-color;
+    }
+   .mission{
+    padding: 0 24px;
+    .new-todo{
+        width: 100%;
+    }
+    .toDoList-container{
+        width: 100%;
+    }
+    }
+}
