@@ -9,6 +9,8 @@ const loginInput = document.querySelector("#input-log-in")
 const registerInput = document.querySelector("#input-sign-up")
 const loginFormArr = document.querySelectorAll(".login-form")
 const registerFormArr = document.querySelectorAll(".register-form")
+// page mission
+const signOutBtn = document.querySelector("#sign-out")
 
 // functions render register state
 function getResgisterInfo(){
@@ -73,6 +75,7 @@ function getCookie(name){
         }
     }
 }
+
 // API interaction
 async function registerUser(email,nickname,password){
     console.log("start register",email,nickname,password)
@@ -109,7 +112,7 @@ async function loginUser(email,password){
         const response = await fetch(`${apiUrl}/users/sign_in`,{
             method:"POST",
             headers:{
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 "user": {
@@ -123,7 +126,6 @@ async function loginUser(email,password){
             alert("登入成功")
             const token = response.headers.get("Authorization")
             setCookie("token",token,10)
-            console.log(getCookie(token))
             window.location.href = "toDoList.html"
         }
         else{
@@ -133,5 +135,31 @@ async function loginUser(email,password){
         console.error(error)
     }
 }
+async function signOutUser(){
+    const token = getCookie("token")
+    console.log("sign out", token)
+    try {
+        const response = await fetch( `${apiUrl}/users/sign_out`,{
+            method:"DELETE",
+            headers:{
+                "Authorization": token
+            }
+        })
+        const data = await response.json()
+        if(response.ok){
+            alert("登出成功")
+        }else{
+            alert(data.message)
+        }
+        window.location.href = "index.html"
+    } catch (error) {
+        console.error
+    }
+}
 
 // page todoList
+
+// eventlistener
+signOutBtn && signOutBtn.addEventListener("click",()=>{
+    signOutUser()
+})
