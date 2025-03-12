@@ -27,50 +27,47 @@
                     <img class="rwd-hidden" src="https://s3-alpha-sig.figma.com/img/b904/a29f/ff8dca85661a71240c169adaabe22733?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=MlzokdMwNFRHWxpxv4gcn2ud9say6-IGa88JsZXOqgrjXc7MWr6Dnx7XPypNTgV4cPhWO82uW~84XMZXyKnSID-nD-rKX9hr7PENimetXCw-7--MFir82gd7rMq7N0PcJB2OmX7P5avmXfaBpEjIVzvTZBcRBDwYSdZ9pb27CqFm6Lpi1pogNTXgj9TkKbqEXsodqTOW~-W28NzNaRJp1qHdYVi2dyZXtkQNUIjWBM8w8gI0Y-KGmOMFQL6hrPrRGfudydqGnRqWKyWzo6zMYVU-dTuw6a2ve1dY9sltUch0I2kDkCX6OftQgOb5z5foc1ApSkKcAwMNXDsUTmcvZQ__" alt="theme-img-1">
             </div>
             <div id="col-r" class="col">
-        
-                <div id="input-log-in" class="input-content ">
+                <form action="">
+                <div id="input-log-in" class="input-content hidden">
                     <h2>最實用的線上代辦事項服務</h2>
                     <div class="input-set">
                         <label for="email">Email</label>
-                        <input id="email" type="email" placeholder="請輸入Email" >
+                        <input class="login-form" id="email" type="email" placeholder="請輸入Email" >
                         <p>此欄位不可為空</p>
 
                     </div>
                     <div class="input-set">
                         <label for="password">密碼</label>
-                        <input id="password" type="text" placeholder="請輸入密碼" >
+                        <input class="login-form" id="password" type="text" placeholder="請輸入密碼" >
                     </div>
                 </div>
 
-                <div id="input-sign-up" class="input-content hidden">
+                <div id="input-sign-up" class="input-content ">
         
                     <h2>註冊帳號</h2>
                     <div class="input-set">
                         <label for="email-register">Email</label>
-                        <input id="email-register" type="email" placeholder="請輸入Email" required>
+                        <input class="register-form" id="email-register" type="email" placeholder="請輸入Email" required>
                     </div>
                     <div class="input-set">
-                        <label for="nickname">您的暱稱</label>
-                        <input id="nickname" type="text" placeholder="請輸入您的暱稱" required>
+                        <label for="nickname-register">您的暱稱</label>
+                        <input class="register-form" id="nickname-register" type="text" placeholder="請輸入您的暱稱" required>
                     </div>
                     <div class="input-set">
                         <label for="password-register">密碼</label>
-                        <input id="password-register" type="text" placeholder="請輸入密碼" required>
+                        <input class="register-form" id="password-register" type="password" placeholder="請輸入密碼" required>
                     </div>
                     <div class="input-set">
                         <label for="password-confirm">再次輸入密碼</label>
-                        <input id="password-confirm" type="text" placeholder="請再次輸入密碼" required>
+                        <input class="register-form" id="password-confirm" type="password" placeholder="請再次輸入密碼" required>
                     </div>
                 </div>
         
-                <div class="mainpage-btns">
-                    <a href="./toDoList.html">
-                        <div id="btn-log-in">登入</div>
-                    </a>
-                    <a href="">
-                        <div id="btn-sign-up">註冊帳號</div>
-                    </a>
+                <div class="mainpage-btns reverse">
+                        <button id="btn-log-in">登入</button>
+                        <button id="btn-sign-up">註冊帳號</button>
                 </div>
+                </form>
             </div>
     </main>
 
