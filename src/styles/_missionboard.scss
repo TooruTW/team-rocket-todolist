@@ -1,10 +1,10 @@
 @use "variables" as *;
 
-body{
+.mission-body{
     position: relative;
     background-color: transparent;
 }
-body::after{
+.mission-body::after{
     z-index: -1;
     content: '';
     position: absolute;
@@ -205,10 +205,10 @@ header{
             display: none;
         }
    }
-   body::after{
+   .mission-body::after{
     display: none;
     }
-    body{
+    .mission-body{
     background-color: $theme-color;
     }
    .mission{
