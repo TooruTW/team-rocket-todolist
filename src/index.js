@@ -83,17 +83,48 @@ function updateList(arr){
     console.log("clearn list")
     listContainer.innerHTML = ""
     console.log("updating list")
-    arr.forEach(item => {
+    arr.forEach((item,index) => {
+        // create mission card
         const clone = missionTemplate.content.cloneNode(true);
         clone.querySelector(".mission-card").id = item.id;
-        clone.querySelector("input").value = item.content;
+
+        clone.querySelector(".content").value = item.content;
         if(item.completed_at){
             clone.querySelector(".mission-card").classList.add("done")
-            clone.querySelector("input").classList.add("line-through")
+            clone.querySelector(".content").classList.add("line-through")
+            clone.querySelector(".content").readOnly = true
         }else{
             clone.querySelector(".state-box").classList.remove("done")
-            clone.querySelector("input").classList.remove("line-through")
+            clone.querySelector(".content").classList.remove("line-through")
+            clone.querySelector(".content").readOnly = false
         }
+        const deleteIcon = clone.querySelector(".icon-delete");     
+        // show delete btn   
+        clone.querySelector(".mission-card").addEventListener("mouseover", ()=>{
+            deleteIcon.classList.remove("hidden")
+        })
+        clone.querySelector(".mission-card").addEventListener("mouseout", ()=>{
+            deleteIcon.classList.add("hidden")
+        })
+        // delete mission
+        deleteIcon.addEventListener('click',()=>{
+            deleteMission(item.id)
+        })
+        // toggle mission status
+        clone.querySelector(".state-box").addEventListener("click", ()=>{
+            toggleMission(item.id)
+        })
+        // edit mission
+        const contentContainer = clone.querySelector(".content")
+        clone.querySelector(".content").addEventListener("keydown", event =>{
+            
+            if(event.key === "Enter"){
+                console.log(item.id,"Enter got clicked, updating content")
+                console.log(contentContainer.value)
+                
+                editMissioin(item.id,contentContainer.value)
+            }
+        })
         listContainer.appendChild(clone)
     })
 }
@@ -218,10 +249,63 @@ async function addMissioin(newContent) {
         console.error
     }
 }
-
+async function editMissioin(id,newContent) {
+    console.log("edit mission")
+    const token = getCookie("token")
+    try {
+        const response = await fetch(`${apiUrl}/todos/${id}`,{
+            method:"PUT",
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+            body: JSON.stringify({
+                "todo": {
+                    "content": newContent
+                }
+            })
+        })
+        const data = await response.json()
+        console.log(data, response.ok)
+        getList()
+    } catch (error) {
+        console.error
+    }
+}
+async function deleteMission(id) {
+    console.log("delete mission")
+    const token = getCookie("token")
+    try{
+        const response = await fetch(`${apiUrl}/todos/${id}`,{
+            method:"DELETE",
+            headers:{"Authorization": token}
+        })
+        if(response.ok){
+            console.log(id,"has been deleted")
+            getList()
+        }
+    }catch(error){
+        console.error
+    }
+}
+async function toggleMission(id) {
+    console.log("toggle mission")
+    const token = getCookie("token")
+    try{
+        const response = await fetch(`${apiUrl}/todos/${id}/toggle`,{
+            method:"PATCH",
+            headers:{"Authorization": token}
+        })
+        if(response.ok){
+            console.log(id,"mission state change")
+            getList()
+        }
+    }catch(error){
+        console.error
+    }
+}
 // page todoList
 listContainer && getList()
-
 // eventlistener
 signOutBtn && signOutBtn.addEventListener("click",()=>{
     signOutUser()
