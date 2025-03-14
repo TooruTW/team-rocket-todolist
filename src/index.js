@@ -11,13 +11,14 @@ const loginFormArr = document.querySelectorAll(".login-form")
 const registerFormArr = document.querySelectorAll(".register-form")
 // page mission
 const signOutBtn = document.querySelector("#sign-out")
-let toDoList
 const listContainer = document.querySelector("#list")
 const missionTemplate = document.querySelector("#mission-template")
 const addMissionBtn = document.querySelector(".btn-add-todo")
 const categoryBtnArr = document.querySelectorAll(".category-btn")
 const undoneCount = document.querySelector("#mission-count")
 const clearnDone = document.querySelector("#clearn-done")
+const containerNoMission = document.querySelector(".container-no-mission")
+const toDoListContainer = document.querySelector("#toDoList-container")
 // condition
 
 // functions render register state
@@ -111,7 +112,14 @@ function updateList(condition,ogArr){
     console.log("clearn list",arr)
     listContainer.innerHTML = ""
     console.log("updating list")
-    arr.forEach((item,index) => {
+    if(arr.length <= 0) {
+        containerNoMission.classList.remove("hidden")
+        toDoListContainer.classList.add("hidden")
+    }else{
+        containerNoMission.classList.add("hidden")
+        toDoListContainer.classList.remove("hidden")
+    }
+    arr.forEach((item) => {
         // create mission card
         const clone = missionTemplate.content.cloneNode(true);
         clone.querySelector(".mission-card").id = item.id;
