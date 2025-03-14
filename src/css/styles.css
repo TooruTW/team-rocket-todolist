@@ -219,12 +219,15 @@ header div h2 {
   align-items: center;
   height: 51px;
   border-bottom: 2px solid #EFEFEF;
+  cursor: pointer;
 }
 .mission .toDoList-container .category .category-selected {
+  pointer-events: auto;
   color: #333333;
   font-weight: 700;
 }
 .mission .toDoList-container .category::after {
+  pointer-events: none;
   content: " ";
   position: absolute;
   width: 33.3333333333%;
@@ -233,7 +236,7 @@ header div h2 {
   background-color: transparent;
   z-index: 10;
   border-bottom: 2px solid #333333;
-  transform: translateX(0%);
+  transform: translateX(var(--category-position));
   transition: all 0.5s ease;
 }
 .mission .toDoList-container .list {
@@ -290,7 +293,7 @@ header div h2 {
   font-size: 14px;
   font-weight: 400;
 }
-.mission .toDoList-container .status-and-clearn button {
+.mission .toDoList-container .status-and-clearn div {
   border: none;
   background-color: transparent;
   color: #9F9A91;

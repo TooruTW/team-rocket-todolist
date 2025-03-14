@@ -45,9 +45,9 @@
             <div id="category" class="category">
                 <nav>
                     <ul>
-                        <li class="category-selected">全部</li>
-                        <li>待完成</li>
-                        <li>已完成</li>
+                        <li id="all" class="category-selected category-btn">全部</li>
+                        <li id="undone" class="category-btn">待完成</li>
+                        <li id="done" class="category-btn">已完成</li>
                     </ul>
                 </nav>
             </div>
@@ -90,7 +90,7 @@
                 <h2>
                     <span id="mission-count">5</span> 個待完成項目
                 </h2>
-                <button>清除已完成項目</button>
+                <div id="clearn-done">清除已完成項目</div>
             </div>
         </div>
         <div class="container-no-mission hidden">

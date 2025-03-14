@@ -100,14 +100,17 @@ header{
                     align-items: center;
                     height: 51px;
                     border-bottom: 2px solid $line-color-gray; ;
+                    cursor: pointer;
                 }
             }
             .category-selected{
+                pointer-events: auto;
                 color: $theme-color-dark;
                 font-weight: 700;
             }
         }
         .category::after{
+            pointer-events: none;
             content: " ";
             position: absolute;
             width: (100% / 3);
@@ -176,7 +179,7 @@ header{
                 font-size: 14px;
                 font-weight: 400;
             }
-            button{
+            div{
                 border: none;
                 background-color: transparent;
                 color: $text-color-gray;

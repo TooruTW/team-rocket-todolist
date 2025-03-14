@@ -15,6 +15,10 @@ let toDoList
 const listContainer = document.querySelector("#list")
 const missionTemplate = document.querySelector("#mission-template")
 const addMissionBtn = document.querySelector(".btn-add-todo")
+const categoryBtnArr = document.querySelectorAll(".category-btn")
+const undoneCount = document.querySelector("#mission-count")
+const clearnDone = document.querySelector("#clearn-done")
+// condition
 
 // functions render register state
 function getResgisterInfo(){
@@ -78,8 +82,33 @@ function getCookie(name){
         }
     }
 }
-function updateList(arr){
-    console.log("clearn list")
+function filteArr(contition,arr){
+    let result 
+    console.log(arr)
+    switch (contition) {
+        case "all":
+            result = arr
+            break;
+        case "done":
+            result = arr.filter((item) =>{
+                return item.completed_at !== null
+            })
+            break;
+        case "undone":
+            result = arr.filter((item) =>{
+                return item.completed_at === null
+            })
+            break;            
+    
+        default:
+            break;
+    }
+    console.log("after filter",result)
+    return result
+}
+function updateList(condition,ogArr){
+    let arr = filteArr(condition,ogArr)
+    console.log("clearn list",arr)
     listContainer.innerHTML = ""
     console.log("updating list")
     arr.forEach((item,index) => {
@@ -127,7 +156,6 @@ function updateList(arr){
         listContainer.appendChild(clone)
     })
 }
-
 // do request
 function requestMessange(requestMethod,bodyContent,isUseToken){
     const token = getCookie("token")
@@ -144,17 +172,15 @@ function requestMessange(requestMethod,bodyContent,isUseToken){
     return message
 }
 
-
 // API interaction
 // user identify
 async function registerUser(email,nickname,password){
     console.log("start register",email,nickname,password)
     const content = {"user":{"email" : email, "nickname" : nickname, "password" : password}}
-    const requestMessage = requestMessange("POST",content,false) 
     try{
-        const response = await fetch(`${apiUrl}/users`,{
-            ...requestMessage
-        })
+        const response = await fetch(`${apiUrl}/users`,
+            requestMessange("POST",content,false) 
+        )
         const data = await response.json()
         if(response.ok){
             alert("註冊成功")
@@ -211,7 +237,7 @@ async function signOutUser(){
     }
 }
 // todolist edit
-async function getList() {
+async function getList(condition = "all") {
     console.log("get list")
     const content = {}
     const requestMessage = requestMessange("GET",content,true) 
@@ -220,13 +246,13 @@ async function getList() {
             ...requestMessage
         })
         const data = await response.json()
-        updateList(data.todos)
-        toDoList = data.todos
-        console.log(toDoList)
+        updateList(condition,data.todos)
+        undoneCount.textContent = data.todos.filter(item =>item.completed_at ===null).length
     } catch (error) {
         console.error
     }
 }
+
 async function addMissioin(newContent) {
     console.log("add mission")
     const content = {"todo":{"content":newContent}}
@@ -268,7 +294,7 @@ async function deleteMission(id) {
             getList()
         }
     }catch(error){
-        console.error
+        console.error(error)
     }
 }
 async function toggleMission(id) {
@@ -297,4 +323,23 @@ addMissionBtn && addMissionBtn.addEventListener("click",()=>{
     const content = document.querySelector("#new-toDo-input").value
     console.log("content" ,content,typeof(content))
     addMissioin(content)
+})
+
+function moveSelectBar(index){
+    document.documentElement.style.setProperty("--category-position",`${index}00%`)
+}
+categoryBtnArr && categoryBtnArr.forEach((item,index) =>{
+    item.addEventListener("click",()=>{
+        categoryBtnArr.forEach(i =>{i.classList.remove("category-selected")})
+        item.classList.add("category-selected")
+        moveSelectBar(index)
+        getList(item.id)
+    })
+})
+clearnDone && clearnDone.addEventListener("click", ()=>{
+    let middionDoneArr = [...document.querySelectorAll(".mission-card")]
+    let deleteList = middionDoneArr.filter(item => item.classList.contains("done")).map(item => item.id)
+    deleteList.forEach(item =>{
+        deleteMission(item)
+    })
 })
