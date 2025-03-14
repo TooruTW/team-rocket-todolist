@@ -15,6 +15,10 @@ let toDoList
 const listContainer = document.querySelector("#list")
 const missionTemplate = document.querySelector("#mission-template")
 const addMissionBtn = document.querySelector(".btn-add-todo")
+const categoryBtnArr = document.querySelectorAll(".category-btn")
+const undoneCount = document.querySelector("#mission-count")
+const clearnDone = document.querySelector("#clearn-done")
+// condition
 
 // functions render register state
 function getResgisterInfo(){
@@ -78,9 +82,33 @@ function getCookie(name){
         }
     }
 }
-
-function updateList(arr){
-    console.log("clearn list")
+function filteArr(contition,arr){
+    let result 
+    console.log(arr)
+    switch (contition) {
+        case "all":
+            result = arr
+            break;
+        case "done":
+            result = arr.filter((item) =>{
+                return item.completed_at !== null
+            })
+            break;
+        case "undone":
+            result = arr.filter((item) =>{
+                return item.completed_at === null
+            })
+            break;            
+    
+        default:
+            break;
+    }
+    console.log("after filter",result)
+    return result
+}
+function updateList(condition,ogArr){
+    let arr = filteArr(condition,ogArr)
+    console.log("clearn list",arr)
     listContainer.innerHTML = ""
     console.log("updating list")
     arr.forEach((item,index) => {
@@ -128,25 +156,31 @@ function updateList(arr){
         listContainer.appendChild(clone)
     })
 }
+// do request
+function requestMessange(requestMethod,bodyContent,isUseToken){
+    const token = getCookie("token")
+    console.log(token)
+    const message = {
+        method: requestMethod,
+        headers:{
+            "Content-Type": "application/json",
+            ...(isUseToken ? {"Authorization": token}:{})
+        },
+        body: JSON.stringify({...bodyContent}),
+    }
+    if(requestMethod === "GET" || requestMessange === "DELETE") {delete message.body} 
+    return message
+}
 
 // API interaction
 // user identify
 async function registerUser(email,nickname,password){
     console.log("start register",email,nickname,password)
+    const content = {"user":{"email" : email, "nickname" : nickname, "password" : password}}
     try{
-        const response = await fetch(`${apiUrl}/users`,{
-            method:"POST",
-            headers: {
-                "Content-Type": "application/json",
-              },
-            body: JSON.stringify({
-                "user": {
-                    "email": email,
-                    "nickname": nickname,
-                    "password": password
-                  }
-            })
-        })
+        const response = await fetch(`${apiUrl}/users`,
+            requestMessange("POST",content,false) 
+        )
         const data = await response.json()
         if(response.ok){
             alert("註冊成功")
@@ -162,18 +196,11 @@ async function registerUser(email,nickname,password){
 }
 async function loginUser(email,password){
     console.log("start login",email,password)
+    const content = {"user":{"email" : email, "password" : password}}
+    const requestMessage = requestMessange("POST",content,false) 
     try {
         const response = await fetch(`${apiUrl}/users/sign_in`,{
-            method:"POST",
-            headers:{
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "user": {
-                    "email": email,
-                    "password": password
-                  }
-            })
+            ...requestMessage
         })
         const data = await response.json()
         if(response.ok){
@@ -190,12 +217,13 @@ async function loginUser(email,password){
     }
 }
 async function signOutUser(){
-    const token = getCookie("token")
-    console.log("sign out", token)
+    console.log("sign out")
+    const content = {}
+    const requestMessage = requestMessange("DELETE",content,true) 
+    console.log(requestMessage)
     try {
         const response = await fetch( `${apiUrl}/users/sign_out`,{
-            method:"DELETE",
-            headers:{"Authorization": token}
+            ...requestMessage
         })
         const data = await response.json()
         if(response.ok){
@@ -209,38 +237,28 @@ async function signOutUser(){
     }
 }
 // todolist edit
-async function getList() {
+async function getList(condition = "all") {
     console.log("get list")
-    const token = getCookie("token")
+    const content = {}
+    const requestMessage = requestMessange("GET",content,true) 
     try {
         const response = await fetch(`${apiUrl}/todos`,{
-            method:"GET",
-            headers:{"Authorization": token}
+            ...requestMessage
         })
         const data = await response.json()
-        updateList(data.todos)
-        toDoList = data.todos
-        console.log(toDoList)
+        updateList(condition,data.todos)
+        undoneCount.textContent = data.todos.filter(item =>item.completed_at ===null).length
     } catch (error) {
         console.error
     }
 }
+
 async function addMissioin(newContent) {
     console.log("add mission")
-    const token = getCookie("token")
+    const content = {"todo":{"content":newContent}}
     try {
         const response = await fetch(`${apiUrl}/todos`,{
-            method:"POST",
-            headers:{
-                "accept": "application/json", 
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({
-                "todo": {
-                    "content": newContent
-                }
-            })
+            ...requestMessange("POST",content,true) 
         })
         const data = await response.json()
         console.log(data, response.ok)
@@ -249,21 +267,13 @@ async function addMissioin(newContent) {
         console.error
     }
 }
+
 async function editMissioin(id,newContent) {
     console.log("edit mission")
-    const token = getCookie("token")
+    const content = {"todo":{"content":newContent}}
     try {
         const response = await fetch(`${apiUrl}/todos/${id}`,{
-            method:"PUT",
-            headers:{
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({
-                "todo": {
-                    "content": newContent
-                }
-            })
+            ...requestMessange("PUT",content,true)
         })
         const data = await response.json()
         console.log(data, response.ok)
@@ -274,27 +284,25 @@ async function editMissioin(id,newContent) {
 }
 async function deleteMission(id) {
     console.log("delete mission")
-    const token = getCookie("token")
+    const content = {}
     try{
         const response = await fetch(`${apiUrl}/todos/${id}`,{
-            method:"DELETE",
-            headers:{"Authorization": token}
+          ...requestMessange("DELETE",content,true)
         })
         if(response.ok){
             console.log(id,"has been deleted")
             getList()
         }
     }catch(error){
-        console.error
+        console.error(error)
     }
 }
 async function toggleMission(id) {
     console.log("toggle mission")
-    const token = getCookie("token")
+    const content = {}
     try{
         const response = await fetch(`${apiUrl}/todos/${id}/toggle`,{
-            method:"PATCH",
-            headers:{"Authorization": token}
+            ...requestMessange("PATCH",content,true)
         })
         if(response.ok){
             console.log(id,"mission state change")
@@ -315,4 +323,23 @@ addMissionBtn && addMissionBtn.addEventListener("click",()=>{
     const content = document.querySelector("#new-toDo-input").value
     console.log("content" ,content,typeof(content))
     addMissioin(content)
+})
+
+function moveSelectBar(index){
+    document.documentElement.style.setProperty("--category-position",`${index}00%`)
+}
+categoryBtnArr && categoryBtnArr.forEach((item,index) =>{
+    item.addEventListener("click",()=>{
+        categoryBtnArr.forEach(i =>{i.classList.remove("category-selected")})
+        item.classList.add("category-selected")
+        moveSelectBar(index)
+        getList(item.id)
+    })
+})
+clearnDone && clearnDone.addEventListener("click", ()=>{
+    let middionDoneArr = [...document.querySelectorAll(".mission-card")]
+    let deleteList = middionDoneArr.filter(item => item.classList.contains("done")).map(item => item.id)
+    deleteList.forEach(item =>{
+        deleteMission(item)
+    })
 })
