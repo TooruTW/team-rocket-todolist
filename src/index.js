@@ -20,6 +20,7 @@ const clearnDone = document.querySelector("#clearn-done")
 const containerNoMission = document.querySelector(".container-no-mission")
 const toDoListContainer = document.querySelector("#toDoList-container")
 // condition
+let currentCategory = "all"
 
 // functions render register state
 function getResgisterInfo(){
@@ -107,16 +108,20 @@ function filteArr(contition,arr){
     console.log("after filter",result)
     return result
 }
-function updateList(condition,ogArr){
+function updateList(condition,ogArr,missionRemain){
     let arr = filteArr(condition,ogArr)
     console.log("clearn list",arr)
     listContainer.innerHTML = ""
     console.log("updating list")
     if(arr.length <= 0) {
-        containerNoMission.classList.remove("hidden")
-        toDoListContainer.classList.add("hidden")
+        listContainer.classList.add("hidden")
+        if(missionRemain <= 0 && ogArr.length <=0){
+            toDoListContainer.classList.add("hidden")
+            containerNoMission.classList.remove("hidden")
+        }
     }else{
         containerNoMission.classList.add("hidden")
+        listContainer.classList.remove("hidden")
         toDoListContainer.classList.remove("hidden")
     }
     arr.forEach((item) => {
@@ -245,7 +250,7 @@ async function signOutUser(){
     }
 }
 // todolist edit
-async function getList(condition = "all") {
+async function getList() {
     console.log("get list")
     const content = {}
     const requestMessage = requestMessange("GET",content,true) 
@@ -254,8 +259,9 @@ async function getList(condition = "all") {
             ...requestMessage
         })
         const data = await response.json()
-        updateList(condition,data.todos)
-        undoneCount.textContent = data.todos.filter(item =>item.completed_at ===null).length
+        const undoneNum = data.todos.filter(item =>item.completed_at ===null).length
+        updateList(currentCategory,data.todos,undoneNum)
+        undoneCount.textContent = undoneNum
     } catch (error) {
         console.error
     }
@@ -340,8 +346,9 @@ categoryBtnArr && categoryBtnArr.forEach((item,index) =>{
     item.addEventListener("click",()=>{
         categoryBtnArr.forEach(i =>{i.classList.remove("category-selected")})
         item.classList.add("category-selected")
+        currentCategory = item.id
         moveSelectBar(index)
-        getList(item.id)
+        getList()
     })
 })
 clearnDone && clearnDone.addEventListener("click", ()=>{
