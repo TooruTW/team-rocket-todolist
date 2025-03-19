@@ -1,0 +1,26 @@
+{
+  "name": "todolist-ec2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html",
+    "build": "parcel build index.html --out-dir dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TooruTW/team-rocket-todolist.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TooruTW/team-rocket-todolist/issues"
+  },
+  "homepage": "https://github.com/TooruTW/team-rocket-todolist#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}
